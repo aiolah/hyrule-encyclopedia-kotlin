@@ -1,4 +1,4 @@
-# Hyrule's Encyclopedia
+# Hyrule's Encyclopedia 🗡️
 
 ## Teaser ✨
 Vous est-il déjà arrivé de croiser un ennemi dans Breath of the Wild et de ne pas réussir à l'identifier ? <br>
