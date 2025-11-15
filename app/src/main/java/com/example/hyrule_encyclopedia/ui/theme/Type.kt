@@ -27,6 +27,7 @@ val displayFontFamily = FontFamily(
     Font(
         googleFont = GoogleFont("Prociono"),
         fontProvider = provider,
+        weight = FontWeight.Bold
     )
 )
 

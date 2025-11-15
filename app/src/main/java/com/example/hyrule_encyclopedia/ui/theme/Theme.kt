@@ -12,10 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.googlefonts.GoogleFont
-import androidx.compose.ui.text.googlefonts.Font
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -255,17 +251,6 @@ data class ColorFamily(
 
 val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
-)
-
-val prociono = GoogleFont("Prociono")
-
-@RequiresApi(Build.VERSION_CODES.Q)
-val procionoFontFamily = FontFamily(
-    Font(
-        googleFont = prociono,
-        fontProvider = provider,
-        weight = FontWeight.Bold,
-    )
 )
 
 @Composable

@@ -12,31 +12,42 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.googlefonts.isAvailableOnDevice
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.hyrule_encyclopedia.ui.theme.HyruleEncyclopediaTheme
+import com.example.hyrule_encyclopedia.ui.theme.hyliaFontFamily
+import com.example.hyrule_encyclopedia.ui.theme.onPrimaryContainerLight
 import com.example.hyrule_encyclopedia.ui.theme.primaryContainerLight
 import com.example.hyrule_encyclopedia.ui.theme.primaryLight
-import com.example.hyrule_encyclopedia.ui.theme.prociono
-import com.example.hyrule_encyclopedia.ui.theme.procionoFontFamily
+import com.example.hyrule_encyclopedia.ui.theme.secondaryContainerLight
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -54,7 +65,7 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     // CreatureText(viewmodel)
                     // logCreature(viewmodel, modifier = Modifier.padding(innerPadding))
-                    Box(
+                    /*Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.fillMaxSize().padding(innerPadding)
                     ) {
@@ -65,7 +76,9 @@ class MainActivity : ComponentActivity() {
                         ) {
                             CreatureCard(viewmodel)
                         }
-                    }
+                    }*/
+
+                    CreatureCard2(viewmodel)
                 }
             }
         }
@@ -96,8 +109,7 @@ fun CreatureText(viewModel: MainViewModel)
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun CreatureCard(viewModel: MainViewModel)
-{
+fun CreatureCard(viewModel: MainViewModel) {
     val creatures by viewModel.creatures.collectAsStateWithLifecycle()
 
     val configuration = LocalConfiguration.current
@@ -107,9 +119,13 @@ fun CreatureCard(viewModel: MainViewModel)
 
     creatures.forEach {
         ElevatedCard(
-            modifier = Modifier.size(height = 160.dp, width = screenWidth).padding(7.dp),
+            modifier = Modifier.size(height = 160.dp, width = 200.dp).padding(7.dp),
             colors = CardDefaults.cardColors(
                 containerColor = primaryLight,
+            ),
+            // shape = RoundedCornerShape(0),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 6.dp
             )
         ) {
             Column(
@@ -118,21 +134,84 @@ fun CreatureCard(viewModel: MainViewModel)
                 modifier = Modifier.size(height = 160.dp, width = screenWidth)
             ) {
                 Row {
-                    AsyncImage(model = it.image, contentDescription = "Image de " + it.name)
-                }
-                Row {
-                    Text(
-                        fontFamily = procionoFontFamily,
-                        text = it.name.replaceFirstChar { it.uppercase() },
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        color = primaryContainerLight
+                    AsyncImage(
+                        model = it.image,
+                        contentDescription = "Image de " + it.name,
+                        modifier = Modifier.clip(RoundedCornerShape(5))
                     )
                 }
                 Row {
-                    Text(it.id.toString())
+                    Text(
+                        fontFamily = hyliaFontFamily,
+                        text = it.name.replaceFirstChar { it.uppercase() },
+                        textAlign = TextAlign.Center,
+                        color = secondaryContainerLight
+                    )
+                }
+                Row {
+                    Text(
+                        it.id.toString(),
+                        fontFamily = hyliaFontFamily,
+                        color = primaryContainerLight
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+fun CreatureCard2(viewModel: MainViewModel) {
+    val creatures by viewModel.creatures.collectAsStateWithLifecycle()
+
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.padding(5.dp),
+        contentPadding = PaddingValues(vertical = 50.dp)
+    ) {
+        items(creatures) { creature ->
+            ElevatedCard(
+                modifier = Modifier.size(height = 160.dp, width = 200.dp).padding(7.dp),
+                colors = CardDefaults.cardColors(containerColor = onPrimaryContainerLight),
+                // shape = RoundedCornerShape(0),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 6.dp
+                )
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.size(height = 160.dp, width = screenWidth)
+                ) {
+                    Row {
+                        AsyncImage(
+                            model = creature.image,
+                            contentDescription = "Image de " + creature.name,
+                            modifier = Modifier.clip(RoundedCornerShape(5))
+                        )
+                    }
+                    Row {
+                        Text(
+                            fontFamily = hyliaFontFamily,
+                            text = creature.name.replaceFirstChar { it.uppercase() },
+                            textAlign = TextAlign.Center,
+                            color = secondaryContainerLight
+                        )
+                    }
+                    Row {
+                        Text(
+                            creature.id.toString(),
+                            fontFamily = hyliaFontFamily,
+                            color = primaryContainerLight
+                        )
+                    }
+                }
+            }
+        }
+        }
 }

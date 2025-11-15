@@ -65,4 +65,5 @@ dependencies {
     implementation(libs.ktor.serialization)
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("androidx.compose.ui:ui-text-google-fonts:1.9.3")
+    implementation(platform("androidx.compose:compose-bom:2025.10.01"))
 }
