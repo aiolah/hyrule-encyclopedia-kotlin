@@ -33,11 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.googlefonts.isAvailableOnDevice
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -65,20 +61,8 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     // CreatureText(viewmodel)
                     // logCreature(viewmodel, modifier = Modifier.padding(innerPadding))
-                    /*Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize().padding(innerPadding)
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.verticalScroll(rememberScrollState())
-                        ) {
-                            CreatureCard(viewmodel)
-                        }
-                    }*/
 
-                    CreatureCard2(viewmodel)
+                    CreaturesGrid(viewmodel)
                 }
             }
         }
@@ -107,67 +91,58 @@ fun CreatureText(viewModel: MainViewModel)
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.Q)
+// Card d'une créature
 @Composable
-fun CreatureCard(viewModel: MainViewModel) {
-    val creatures by viewModel.creatures.collectAsStateWithLifecycle()
+fun CreatureCard(creature: Creature) {
 
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    creatures.forEach {
-        ElevatedCard(
-            modifier = Modifier.size(height = 160.dp, width = 200.dp).padding(7.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = primaryLight,
-            ),
-            // shape = RoundedCornerShape(0),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 6.dp
-            )
+    ElevatedCard(
+        modifier = Modifier.size(height = 160.dp, width = 200.dp).padding(7.dp),
+        colors = CardDefaults.cardColors(containerColor = onPrimaryContainerLight),
+        // shape = RoundedCornerShape(0),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        )
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.size(height = 160.dp, width = screenWidth)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.size(height = 160.dp, width = screenWidth)
-            ) {
-                Row {
-                    AsyncImage(
-                        model = it.image,
-                        contentDescription = "Image de " + it.name,
-                        modifier = Modifier.clip(RoundedCornerShape(5))
-                    )
-                }
-                Row {
-                    Text(
-                        fontFamily = hyliaFontFamily,
-                        text = it.name.replaceFirstChar { it.uppercase() },
-                        textAlign = TextAlign.Center,
-                        color = secondaryContainerLight
-                    )
-                }
-                Row {
-                    Text(
-                        it.id.toString(),
-                        fontFamily = hyliaFontFamily,
-                        color = primaryContainerLight
-                    )
-                }
+            Row {
+                AsyncImage(
+                    model = creature.image,
+                    contentDescription = "Image de " + creature.name,
+                    modifier = Modifier.clip(RoundedCornerShape(5))
+                )
+            }
+            Row {
+                Text(
+                    fontFamily = hyliaFontFamily,
+                    text = creature.name.replaceFirstChar { it.uppercase() },
+                    textAlign = TextAlign.Center,
+                    color = secondaryContainerLight
+                )
+            }
+            Row {
+                Text(
+                    creature.id.toString(),
+                    fontFamily = hyliaFontFamily,
+                    color = primaryContainerLight
+                )
             }
         }
     }
 }
 
+// Grille verticale contenant les cards des créatures
 @Composable
-fun CreatureCard2(viewModel: MainViewModel) {
+fun CreaturesGrid(viewModel: MainViewModel) {
     val creatures by viewModel.creatures.collectAsStateWithLifecycle()
-
-    val configuration = LocalConfiguration.current
-
-    val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = configuration.screenWidthDp.dp
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -175,43 +150,7 @@ fun CreatureCard2(viewModel: MainViewModel) {
         contentPadding = PaddingValues(vertical = 50.dp)
     ) {
         items(creatures) { creature ->
-            ElevatedCard(
-                modifier = Modifier.size(height = 160.dp, width = 200.dp).padding(7.dp),
-                colors = CardDefaults.cardColors(containerColor = onPrimaryContainerLight),
-                // shape = RoundedCornerShape(0),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
-                )
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.size(height = 160.dp, width = screenWidth)
-                ) {
-                    Row {
-                        AsyncImage(
-                            model = creature.image,
-                            contentDescription = "Image de " + creature.name,
-                            modifier = Modifier.clip(RoundedCornerShape(5))
-                        )
-                    }
-                    Row {
-                        Text(
-                            fontFamily = hyliaFontFamily,
-                            text = creature.name.replaceFirstChar { it.uppercase() },
-                            textAlign = TextAlign.Center,
-                            color = secondaryContainerLight
-                        )
-                    }
-                    Row {
-                        Text(
-                            creature.id.toString(),
-                            fontFamily = hyliaFontFamily,
-                            color = primaryContainerLight
-                        )
-                    }
-                }
-            }
+            CreatureCard(creature)
         }
-        }
+    }
 }
