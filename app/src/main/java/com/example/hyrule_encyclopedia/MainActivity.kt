@@ -53,6 +53,10 @@ class MainActivity : ComponentActivity() {
 
         val viewmodel: MainViewModel by viewModels()
         viewmodel.getCreatures()
+        viewmodel.getEquipment()
+        viewmodel.getMonsters()
+        viewmodel.getTreasures()
+        viewmodel.getMaterials()
 
         setContent {
             HyruleEncyclopediaTheme {
@@ -62,7 +66,11 @@ class MainActivity : ComponentActivity() {
                     // CreatureText(viewmodel)
                     // logCreature(viewmodel, modifier = Modifier.padding(innerPadding))
 
-                    CreaturesGrid(viewmodel)
+                    MaterialsGrid(viewmodel)
+                    // TreasuresGrid(viewmodel)
+                    // MonstersGrid(viewmodel)
+                    // EquipmentGrid(viewmodel)
+                    // CreaturesGrid(viewmodel)
                 }
             }
         }
@@ -91,9 +99,89 @@ fun CreatureText(viewModel: MainViewModel)
     }
 }
 
-// Card d'une créature
+// Grille verticale contenant les cards des créatures
 @Composable
-fun CreatureCard(creature: Creature) {
+fun CreaturesGrid(viewModel: MainViewModel) {
+    val creatures by viewModel.creatures.collectAsStateWithLifecycle()
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.padding(5.dp),
+        contentPadding = PaddingValues(vertical = 50.dp)
+    ) {
+        items(creatures) { creature ->
+            ItemCard(creature.name, creature.id, creature.image)
+        }
+    }
+}
+
+// Grille verticale contenant les cards des équipements
+@Composable
+fun EquipmentGrid(viewModel: MainViewModel) {
+    val equipment by viewModel.equipment.collectAsStateWithLifecycle()
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.padding(5.dp),
+        contentPadding = PaddingValues(vertical = 50.dp)
+    ) {
+        items(equipment) { item ->
+            ItemCard(item.name, item.id, item.image)
+        }
+    }
+}
+
+// Grille verticale contenant les cards des monstres
+@Composable
+fun MonstersGrid(viewModel: MainViewModel) {
+    val monsters by viewModel.monsters.collectAsStateWithLifecycle()
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.padding(5.dp),
+        contentPadding = PaddingValues(vertical = 50.dp)
+    ) {
+        items(monsters) { monster ->
+            ItemCard(monster.name, monster.id, monster.image)
+        }
+    }
+}
+
+// Grille verticale contenant les cards des trésors
+@Composable
+fun TreasuresGrid(viewModel: MainViewModel) {
+    val treasures by viewModel.treasures.collectAsStateWithLifecycle()
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.padding(5.dp),
+        contentPadding = PaddingValues(vertical = 50.dp)
+    ) {
+        items(treasures) { treasure ->
+            ItemCard(treasure.name, treasure.id, treasure.image)
+        }
+    }
+}
+
+// Grille verticale contenant les cards des matériaux
+@Composable
+fun MaterialsGrid(viewModel: MainViewModel) {
+    val materials by viewModel.materials.collectAsStateWithLifecycle()
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.padding(5.dp),
+        contentPadding = PaddingValues(vertical = 50.dp)
+    ) {
+        items(materials) { material ->
+            ItemCard(material.name, material.id, material.image)
+        }
+    }
+}
+
+// Card unique à toutes les catégories qui affiche l'image, le nom et l'id d'un élément
+@Composable
+fun ItemCard(name: String, id: Int, url: String) {
 
     val configuration = LocalConfiguration.current
 
@@ -115,42 +203,26 @@ fun CreatureCard(creature: Creature) {
         ) {
             Row {
                 AsyncImage(
-                    model = creature.image,
-                    contentDescription = "Image de " + creature.name,
+                    model = url,
+                    contentDescription = "Image de " + name,
                     modifier = Modifier.clip(RoundedCornerShape(5))
                 )
             }
             Row {
                 Text(
                     fontFamily = hyliaFontFamily,
-                    text = creature.name.replaceFirstChar { it.uppercase() },
+                    text = name.replaceFirstChar { it.uppercase() },
                     textAlign = TextAlign.Center,
                     color = secondaryContainerLight
                 )
             }
             Row {
                 Text(
-                    creature.id.toString(),
+                    id.toString(),
                     fontFamily = hyliaFontFamily,
                     color = primaryContainerLight
                 )
             }
-        }
-    }
-}
-
-// Grille verticale contenant les cards des créatures
-@Composable
-fun CreaturesGrid(viewModel: MainViewModel) {
-    val creatures by viewModel.creatures.collectAsStateWithLifecycle()
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier.padding(5.dp),
-        contentPadding = PaddingValues(vertical = 50.dp)
-    ) {
-        items(creatures) { creature ->
-            CreatureCard(creature)
         }
     }
 }

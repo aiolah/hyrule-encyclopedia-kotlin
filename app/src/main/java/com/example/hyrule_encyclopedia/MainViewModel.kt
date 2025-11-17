@@ -8,9 +8,33 @@ import kotlinx.coroutines.launch
 class MainViewModel: ViewModel() {
     val repository = HyruleRepository()
     val creatures = MutableStateFlow(listOf<Creature>())
+    val equipment = MutableStateFlow(listOf<Equipment>())
+    val monsters = MutableStateFlow(listOf<Monster>())
+    val treasures = MutableStateFlow(listOf<Treasure>())
+    val materials = MutableStateFlow(listOf<Material>())
 
     fun getCreatures()
     {
         viewModelScope.launch { creatures.value = repository.getCreatures() }
+    }
+
+    fun getEquipment()
+    {
+        viewModelScope.launch { equipment.value = repository.getEquipment() }
+    }
+
+    fun getMonsters()
+    {
+        viewModelScope.launch { monsters.value = repository.getMonsters() }
+    }
+
+    fun getTreasures()
+    {
+        viewModelScope.launch { treasures.value = repository.getTreasures() }
+    }
+
+    fun getMaterials()
+    {
+        viewModelScope.launch { materials.value = repository.getMaterials() }
     }
 }
