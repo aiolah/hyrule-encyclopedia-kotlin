@@ -15,6 +15,7 @@ val procionoFontFamily = FontFamily(
     Font(R.font.prociono_regular, FontWeight.ExtraLight)
 )
 
+// Font text card
 val hyliaFontFamily = FontFamily(
     Font(R.font.hyliaserifbeta_regular, FontWeight.Bold),
     Font(R.font.hyliaserifbeta_regular, FontWeight.ExtraBold),
@@ -23,4 +24,10 @@ val hyliaFontFamily = FontFamily(
     Font(R.font.hyliaserifbeta_regular, FontWeight.Normal),
     Font(R.font.hyliaserifbeta_regular, FontWeight.SemiBold),
     Font(R.font.hyliaserifbeta_regular, FontWeight.ExtraLight)
+)
+
+// Font item menu
+val funnelSansFontFamily = FontFamily(
+    Font(R.font.funnel_sans_regular, FontWeight.Normal),
+    Font(R.font.funnel_sans_bold, FontWeight.Bold)
 )

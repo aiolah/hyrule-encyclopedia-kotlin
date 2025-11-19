@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,27 +25,57 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import coil.compose.AsyncImage
 import com.example.hyrule_encyclopedia.ui.theme.HyruleEncyclopediaTheme
+import com.example.hyrule_encyclopedia.ui.theme.backgroundNavigationBar
+import com.example.hyrule_encyclopedia.ui.theme.backgroundNavigationBar2
+import com.example.hyrule_encyclopedia.ui.theme.funnelSansFontFamily
+import com.example.hyrule_encyclopedia.ui.theme.grayText
 import com.example.hyrule_encyclopedia.ui.theme.hyliaFontFamily
+import com.example.hyrule_encyclopedia.ui.theme.onBackgroundLight
 import com.example.hyrule_encyclopedia.ui.theme.onPrimaryContainerLight
 import com.example.hyrule_encyclopedia.ui.theme.primaryContainerLight
 import com.example.hyrule_encyclopedia.ui.theme.primaryLight
+import com.example.hyrule_encyclopedia.ui.theme.procionoFontFamily
 import com.example.hyrule_encyclopedia.ui.theme.secondaryContainerLight
+import com.example.hyrule_encyclopedia.ui.theme.white
+
+data object CreaturesScreen: NavKey
+data object MonstersScreen: NavKey
+data object MaterialsScreen: NavKey
+data object EquipmentScreen: NavKey
+data object TreasuresScreen: NavKey
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -59,18 +91,135 @@ class MainActivity : ComponentActivity() {
         viewmodel.getMaterials()
 
         setContent {
+            val backStack = remember { mutableStateListOf<Any>(CreaturesScreen) }
+            // var screenSelected by remember { mutableStateOf("créatures") }
+
             HyruleEncyclopediaTheme {
                 Scaffold(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        NavigationBar(
+                            containerColor = backgroundNavigationBar2,
+                            contentColor = white
+                        ) {
+                            NavigationBarItem(
+                                icon = {
+                                    Image(painter = painterResource(R.drawable.icon_creatures), contentDescription = "Icône créatures menu")
+                                },
+                                selected = backStack.lastOrNull() == CreaturesScreen,
+                                onClick = { backStack.add(CreaturesScreen) },
+                                label = { Text("Créatures", fontFamily = funnelSansFontFamily, fontWeight = FontWeight.Bold) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    unselectedTextColor = grayText,
+                                    selectedTextColor = Color.Black,
+                                    indicatorColor = white
+                                )
+                            )
+                            NavigationBarItem(
+                                icon = {
+                                    Image(painter = painterResource(R.drawable.icon_monsters), contentDescription = "Icône monstres menu")
+                                },
+                                selected = backStack.lastOrNull() == MonstersScreen,
+                                onClick = { backStack.add(MonstersScreen) },
+                                label = { Text("Monstres", fontFamily = funnelSansFontFamily, fontWeight = FontWeight.Bold) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    unselectedTextColor = grayText,
+                                    selectedTextColor = Color.Black,
+                                    indicatorColor = white
+                                )
+                            )
+                            NavigationBarItem(
+                                icon = {
+                                    Image(painter = painterResource(R.drawable.icon_materials), contentDescription = "Icône matériaux menu")
+                                },
+                                selected = backStack.lastOrNull() == MaterialsScreen,
+                                onClick = { backStack.add(MaterialsScreen) },
+                                label = { Text("Matériaux", fontFamily = funnelSansFontFamily, fontWeight = FontWeight.Bold) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    unselectedTextColor = grayText,
+                                    selectedTextColor = Color.Black,
+                                    indicatorColor = white
+                                )
+                            )
+                            NavigationBarItem(
+                                icon = {
+                                    Image(painter = painterResource(R.drawable.icon_equipment), contentDescription = "Icône équipement menu")
+                                },
+                                selected = backStack.lastOrNull() == EquipmentScreen,
+                                onClick = { backStack.add(EquipmentScreen) },
+                                label = { Text("Équipement", fontFamily = funnelSansFontFamily, fontWeight = FontWeight.Bold) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    unselectedTextColor = grayText,
+                                    selectedTextColor = Color.Black,
+                                    indicatorColor = white
+                                )
+                            )
+                            NavigationBarItem(
+                                icon = {
+                                    Image(painter = painterResource(R.drawable.icon_treasures), contentDescription = "Icône trésors menu")
+                                },
+                                selected = backStack.lastOrNull() == TreasuresScreen,
+                                onClick = { backStack.add(TreasuresScreen) },
+                                label = { Text("Trésors", fontFamily = funnelSansFontFamily, fontWeight = FontWeight.Bold) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    unselectedTextColor = grayText,
+                                    selectedTextColor = Color.Black,
+                                    indicatorColor = white
+                                )
+                            )
+                        }
+                    }
                 ) { innerPadding ->
                     // CreatureText(viewmodel)
                     // logCreature(viewmodel, modifier = Modifier.padding(innerPadding))
 
-                    MaterialsGrid(viewmodel)
+                    // MaterialsGrid(viewmodel)
                     // TreasuresGrid(viewmodel)
                     // MonstersGrid(viewmodel)
                     // EquipmentGrid(viewmodel)
                     // CreaturesGrid(viewmodel)
+
+                    NavDisplay(
+                        backStack = backStack,
+                        /*entryProvider = { key ->
+                            when (key) {
+                                is CreaturesScreen -> NavEntry(CreaturesScreen) {
+                                    CreaturesGrid(viewmodel)
+                                    screenSelected = "créatures";
+                                }
+
+                                is MonstersScreen -> NavEntry(MonstersScreen) {
+                                    MonstersGrid(viewmodel)
+                                    screenSelected = "monsters";
+                                }
+
+                                is MaterialsScreen -> NavEntry(MaterialsScreen) {
+                                    MaterialsGrid(viewmodel)
+                                    screenSelected = "materials";
+                                }
+
+                                is EquipmentScreen -> NavEntry(EquipmentScreen) {
+                                    EquipmentGrid(viewmodel)
+                                    screenSelected = "equipment";
+                                }
+
+                                is TreasuresScreen -> NavEntry(TreasuresScreen) {
+                                    TreasuresGrid(viewmodel)
+                                    screenSelected = "treasures";
+                                }
+
+                                else -> NavEntry(Unit) { Text("Unknown route") }
+                            }
+                        }*/
+
+                        entryProvider = entryProvider {
+                            entry<CreaturesScreen> { CreaturesGrid(viewmodel) }
+                            entry<MonstersScreen> { MonstersGrid(viewmodel) }
+                            entry<MaterialsScreen> { MaterialsGrid(viewmodel) }
+                            entry<EquipmentScreen> { EquipmentGrid(viewmodel) }
+                            entry<TreasuresScreen> { TreasuresGrid(viewmodel) }
+                        }
+                    )
                 }
             }
         }
@@ -107,9 +256,9 @@ fun CreaturesGrid(viewModel: MainViewModel) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(5.dp),
-        contentPadding = PaddingValues(vertical = 50.dp)
+        contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
-        items(creatures) { creature ->
+        items(creatures.sortedBy { it.id }) { creature ->
             ItemCard(creature.name, creature.id, creature.image)
         }
     }
@@ -123,9 +272,9 @@ fun EquipmentGrid(viewModel: MainViewModel) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(5.dp),
-        contentPadding = PaddingValues(vertical = 50.dp)
+        contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
-        items(equipment) { item ->
+        items(equipment.sortedBy { it.id }) { item ->
             ItemCard(item.name, item.id, item.image)
         }
     }
@@ -139,9 +288,9 @@ fun MonstersGrid(viewModel: MainViewModel) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(5.dp),
-        contentPadding = PaddingValues(vertical = 50.dp)
+        contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
-        items(monsters) { monster ->
+        items(monsters.sortedBy { it.id }) { monster ->
             ItemCard(monster.name, monster.id, monster.image)
         }
     }
@@ -155,9 +304,9 @@ fun TreasuresGrid(viewModel: MainViewModel) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(5.dp),
-        contentPadding = PaddingValues(vertical = 50.dp)
+        contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
-        items(treasures) { treasure ->
+        items(treasures.sortedBy { it.id }) { treasure ->
             ItemCard(treasure.name, treasure.id, treasure.image)
         }
     }
@@ -171,9 +320,9 @@ fun MaterialsGrid(viewModel: MainViewModel) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(5.dp),
-        contentPadding = PaddingValues(vertical = 50.dp)
+        contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
-        items(materials) { material ->
+        items(materials.sortedBy { it.id }) { material ->
             ItemCard(material.name, material.id, material.image)
         }
     }
