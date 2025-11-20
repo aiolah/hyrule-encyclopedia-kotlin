@@ -11,15 +11,22 @@ data class ApiResponseCreatures(
 )
 
 @Serializable
-class Creature(val name: String,
-               val id: Int,
-               val category: String,
-               val description: String,
-               val image: String,
+class Creature(val name: String = "",
+               val id: Int = 0,
+               val category: String = "",
+               val description: String = "",
+               val image: String ?= null,
                val common_locations: MutableList<String>? = null,
-               val edible: Boolean,
+               val edible: Boolean ?= null,
                val drops: MutableList<String>? = null,
-               val dlc: Boolean
+               val dlc: Boolean ?= null
+)
+
+@Serializable
+data class ApiResponseOneCreature(
+    val data: Creature,
+    val message: String,
+    val status: Int
 )
 
 @Serializable

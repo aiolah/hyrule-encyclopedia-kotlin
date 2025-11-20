@@ -53,8 +53,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import coil.compose.AsyncImage
 import com.example.hyrule_encyclopedia.ui.theme.HyruleEncyclopediaTheme
@@ -70,12 +73,20 @@ import com.example.hyrule_encyclopedia.ui.theme.primaryLight
 import com.example.hyrule_encyclopedia.ui.theme.procionoFontFamily
 import com.example.hyrule_encyclopedia.ui.theme.secondaryContainerLight
 import com.example.hyrule_encyclopedia.ui.theme.white
+import kotlinx.serialization.Serializable
 
+@Serializable
 data object CreaturesScreen: NavKey
+@Serializable
 data object MonstersScreen: NavKey
+@Serializable
 data object MaterialsScreen: NavKey
+@Serializable
 data object EquipmentScreen: NavKey
+@Serializable
 data object TreasuresScreen: NavKey
+@Serializable
+data class DetailCreatureScreen(val id: Int): NavKey
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -91,8 +102,8 @@ class MainActivity : ComponentActivity() {
         viewmodel.getMaterials()
 
         setContent {
-            val backStack = remember { mutableStateListOf<Any>(CreaturesScreen) }
             // var screenSelected by remember { mutableStateOf("créatures") }
+            val backStack = rememberNavBackStack(CreaturesScreen)
 
             HyruleEncyclopediaTheme {
                 Scaffold(
@@ -213,11 +224,15 @@ class MainActivity : ComponentActivity() {
                         }*/
 
                         entryProvider = entryProvider {
-                            entry<CreaturesScreen> { CreaturesGrid(viewmodel) }
-                            entry<MonstersScreen> { MonstersGrid(viewmodel) }
-                            entry<MaterialsScreen> { MaterialsGrid(viewmodel) }
-                            entry<EquipmentScreen> { EquipmentGrid(viewmodel) }
-                            entry<TreasuresScreen> { TreasuresGrid(viewmodel) }
+                            entry<CreaturesScreen> { CreaturesGrid(viewmodel, backStack) }
+                            entry<MonstersScreen> { MonstersGrid(viewmodel, backStack) }
+                            entry<MaterialsScreen> { MaterialsGrid(viewmodel, backStack) }
+                            entry<EquipmentScreen> { EquipmentGrid(viewmodel, backStack) }
+                            entry<TreasuresScreen> { TreasuresGrid(viewmodel, backStack) }
+
+                            entry<DetailCreatureScreen> {
+                                key -> DetailCreature(key.id, viewmodel, backStack)
+                            }
                         }
                     )
                 }
@@ -250,7 +265,7 @@ fun CreatureText(viewModel: MainViewModel)
 
 // Grille verticale contenant les cards des créatures
 @Composable
-fun CreaturesGrid(viewModel: MainViewModel) {
+fun CreaturesGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
     val creatures by viewModel.creatures.collectAsStateWithLifecycle()
 
     LazyVerticalGrid(
@@ -259,14 +274,14 @@ fun CreaturesGrid(viewModel: MainViewModel) {
         contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(creatures.sortedBy { it.id }) { creature ->
-            ItemCard(creature.name, creature.id, creature.image)
+            ItemCard(creature.name, creature.id, creature.image, backStack)
         }
     }
 }
 
 // Grille verticale contenant les cards des équipements
 @Composable
-fun EquipmentGrid(viewModel: MainViewModel) {
+fun EquipmentGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
     val equipment by viewModel.equipment.collectAsStateWithLifecycle()
 
     LazyVerticalGrid(
@@ -275,14 +290,14 @@ fun EquipmentGrid(viewModel: MainViewModel) {
         contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(equipment.sortedBy { it.id }) { item ->
-            ItemCard(item.name, item.id, item.image)
+            ItemCard(item.name, item.id, item.image, backStack)
         }
     }
 }
 
 // Grille verticale contenant les cards des monstres
 @Composable
-fun MonstersGrid(viewModel: MainViewModel) {
+fun MonstersGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
     val monsters by viewModel.monsters.collectAsStateWithLifecycle()
 
     LazyVerticalGrid(
@@ -291,14 +306,14 @@ fun MonstersGrid(viewModel: MainViewModel) {
         contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(monsters.sortedBy { it.id }) { monster ->
-            ItemCard(monster.name, monster.id, monster.image)
+            ItemCard(monster.name, monster.id, monster.image, backStack)
         }
     }
 }
 
 // Grille verticale contenant les cards des trésors
 @Composable
-fun TreasuresGrid(viewModel: MainViewModel) {
+fun TreasuresGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
     val treasures by viewModel.treasures.collectAsStateWithLifecycle()
 
     LazyVerticalGrid(
@@ -307,14 +322,14 @@ fun TreasuresGrid(viewModel: MainViewModel) {
         contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(treasures.sortedBy { it.id }) { treasure ->
-            ItemCard(treasure.name, treasure.id, treasure.image)
+            ItemCard(treasure.name, treasure.id, treasure.image, backStack)
         }
     }
 }
 
 // Grille verticale contenant les cards des matériaux
 @Composable
-fun MaterialsGrid(viewModel: MainViewModel) {
+fun MaterialsGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
     val materials by viewModel.materials.collectAsStateWithLifecycle()
 
     LazyVerticalGrid(
@@ -323,14 +338,14 @@ fun MaterialsGrid(viewModel: MainViewModel) {
         contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(materials.sortedBy { it.id }) { material ->
-            ItemCard(material.name, material.id, material.image)
+            ItemCard(material.name, material.id, material.image, backStack)
         }
     }
 }
 
 // Card unique à toutes les catégories qui affiche l'image, le nom et l'id d'un élément
 @Composable
-fun ItemCard(name: String, id: Int, url: String) {
+fun ItemCard(name: String, id: Int, url: String?, backStack: NavBackStack<NavKey>) {
 
     val configuration = LocalConfiguration.current
 
@@ -343,7 +358,10 @@ fun ItemCard(name: String, id: Int, url: String) {
         // shape = RoundedCornerShape(0),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
-        )
+        ),
+        onClick = {
+            backStack.add(DetailCreatureScreen(id))
+        }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

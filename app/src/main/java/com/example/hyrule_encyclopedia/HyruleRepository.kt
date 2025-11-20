@@ -37,6 +37,7 @@ class HyruleRepository {
     }
 
     val urlCategory = "https://botw-compendium.herokuapp.com/api/v3/compendium/category/"
+    val urlEntry = "https://botw-compendium.herokuapp.com/api/v3/compendium/entry/"
 
     // Récupération des créatures
     suspend fun getCreatures() : List<Creature> {
@@ -65,6 +66,12 @@ class HyruleRepository {
     // Récupération de tous les matériaux
     suspend fun getMaterials() : List<Material> {
         val response: ApiResponseMaterials = client.get(urlCategory + "materials").body()
+        return response.data
+    }
+
+    // Récupération d'une créature
+    suspend fun getOneCreature(id: Int): Creature {
+        val response: ApiResponseOneCreature = client.get(urlEntry + id).body()
         return response.data
     }
 }

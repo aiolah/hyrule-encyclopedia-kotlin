@@ -1,5 +1,7 @@
 package com.example.hyrule_encyclopedia
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +14,7 @@ class MainViewModel: ViewModel() {
     val monsters = MutableStateFlow(listOf<Monster>())
     val treasures = MutableStateFlow(listOf<Treasure>())
     val materials = MutableStateFlow(listOf<Material>())
+    val creature = MutableStateFlow(Creature())
 
     fun getCreatures()
     {
@@ -36,5 +39,10 @@ class MainViewModel: ViewModel() {
     fun getMaterials()
     {
         viewModelScope.launch { materials.value = repository.getMaterials() }
+    }
+
+    fun getOneCreature(id: Int)
+    {
+        viewModelScope.launch { creature.value = repository.getOneCreature(id) }
     }
 }
