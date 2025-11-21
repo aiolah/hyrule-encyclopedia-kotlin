@@ -86,7 +86,7 @@ data object EquipmentScreen: NavKey
 @Serializable
 data object TreasuresScreen: NavKey
 @Serializable
-data class DetailCreatureScreen(val id: Int): NavKey
+data class DetailEntryScreen(val id: Int, val category: String): NavKey
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -230,8 +230,8 @@ class MainActivity : ComponentActivity() {
                             entry<EquipmentScreen> { EquipmentGrid(viewmodel, backStack) }
                             entry<TreasuresScreen> { TreasuresGrid(viewmodel, backStack) }
 
-                            entry<DetailCreatureScreen> {
-                                key -> DetailCreature(key.id, viewmodel, backStack)
+                            entry< DetailEntryScreen> {
+                                key -> DetailEntry(key.id, key.category, viewmodel, backStack)
                             }
                         }
                     )
@@ -274,7 +274,7 @@ fun CreaturesGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
         contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(creatures.sortedBy { it.id }) { creature ->
-            ItemCard(creature.name, creature.id, creature.image, backStack)
+            ItemCard(creature.name, creature.id, creature.image, creature.category, backStack)
         }
     }
 }
@@ -290,7 +290,7 @@ fun EquipmentGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
         contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(equipment.sortedBy { it.id }) { item ->
-            ItemCard(item.name, item.id, item.image, backStack)
+            ItemCard(item.name, item.id, item.image, item.category, backStack)
         }
     }
 }
@@ -306,7 +306,7 @@ fun MonstersGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
         contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(monsters.sortedBy { it.id }) { monster ->
-            ItemCard(monster.name, monster.id, monster.image, backStack)
+            ItemCard(monster.name, monster.id, monster.image, monster.category, backStack)
         }
     }
 }
@@ -322,7 +322,7 @@ fun TreasuresGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
         contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(treasures.sortedBy { it.id }) { treasure ->
-            ItemCard(treasure.name, treasure.id, treasure.image, backStack)
+            ItemCard(treasure.name, treasure.id, treasure.image, treasure.category, backStack)
         }
     }
 }
@@ -338,14 +338,14 @@ fun MaterialsGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
         contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(materials.sortedBy { it.id }) { material ->
-            ItemCard(material.name, material.id, material.image, backStack)
+            ItemCard(material.name, material.id, material.image, material.category, backStack)
         }
     }
 }
 
 // Card unique à toutes les catégories qui affiche l'image, le nom et l'id d'un élément
 @Composable
-fun ItemCard(name: String, id: Int, url: String?, backStack: NavBackStack<NavKey>) {
+fun ItemCard(name: String, id: Int, url: String?, category: String, backStack: NavBackStack<NavKey>) {
 
     val configuration = LocalConfiguration.current
 
@@ -360,7 +360,7 @@ fun ItemCard(name: String, id: Int, url: String?, backStack: NavBackStack<NavKey
             defaultElevation = 6.dp
         ),
         onClick = {
-            backStack.add(DetailCreatureScreen(id))
+            backStack.add(DetailEntryScreen(id, category))
         }
     ) {
         Column(

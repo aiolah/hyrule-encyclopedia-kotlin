@@ -15,6 +15,10 @@ class MainViewModel: ViewModel() {
     val treasures = MutableStateFlow(listOf<Treasure>())
     val materials = MutableStateFlow(listOf<Material>())
     val creature = MutableStateFlow(Creature())
+    val monster = MutableStateFlow(Monster())
+    val material = MutableStateFlow(Material())
+    val oneEquipment = MutableStateFlow(Equipment())
+    val treasure = MutableStateFlow(Treasure())
 
     fun getCreatures()
     {
@@ -44,5 +48,25 @@ class MainViewModel: ViewModel() {
     fun getOneCreature(id: Int)
     {
         viewModelScope.launch { creature.value = repository.getOneCreature(id) }
+    }
+
+    fun getOneMonster(id: Int)
+    {
+        viewModelScope.launch { monster.value = repository.getOneMonster(id) }
+    }
+
+    fun getOneMaterial(id: Int)
+    {
+        viewModelScope.launch { material.value = repository.getOneMaterial(id) }
+    }
+
+    fun getOneEquipment(id: Int)
+    {
+        viewModelScope.launch { oneEquipment.value = repository.getOneEquipment(id) }
+    }
+
+    fun getOneTreasure(id: Int)
+    {
+        viewModelScope.launch { treasure.value = repository.getOneTreasure(id) }
     }
 }

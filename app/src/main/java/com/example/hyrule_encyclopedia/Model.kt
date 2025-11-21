@@ -15,16 +15,74 @@ class Creature(val name: String = "",
                val id: Int = 0,
                val category: String = "",
                val description: String = "",
-               val image: String ?= null,
-               val common_locations: MutableList<String>? = null,
+               val image: String = "",
+               val common_locations: MutableList<String> ?= null,
                val edible: Boolean ?= null,
-               val drops: MutableList<String>? = null,
+               val drops: MutableList<String> ?= null,
                val dlc: Boolean ?= null
 )
 
 @Serializable
 data class ApiResponseOneCreature(
     val data: Creature,
+    val message: String,
+    val status: Int
+)
+
+@Serializable
+// Classe qui permet de récupérer la réponse de l'API directement
+data class ApiResponseMonsters(
+    val data: List<Monster>,
+    val message: String,
+    val status: Int
+)
+
+@Serializable
+class Monster(
+    val name: String = "", // string; entry name
+    val id: Int = 0,  // integer; ID as shown in compendium
+    val category: String = "", // string; "monsters"
+    val description: String = "", // string; short paragraph
+    val image: String = "", // string; URL of image
+    val common_locations: MutableList<String> ?= null, // array of strings or null for unknown; where the entry is commonly seen
+    val drops: MutableList<String> ?= null, // array of strings or null for unknown; recoverable materials from killing
+    val dlc: Boolean = false // boolean; whether the entry is from a DLC pack
+)
+
+@Serializable
+data class ApiResponseOneMonster(
+    val data: Monster,
+    val message: String,
+    val status: Int
+)
+
+@Serializable
+// Classe qui permet de récupérer la réponse de l'API directement
+data class ApiResponseMaterials(
+    val data: List<Material>,
+    val message: String,
+    val status: Int
+)
+
+@Serializable
+class Material(
+    val name: String = "", // string; entry name
+    val id: Int = 0, // integer; ID as shown in compendium
+    val category: String = "", // string; "materials"
+    val description: String = "", // string; short paragraph
+    val image: String = "", // string; URL of image
+    val common_locations: MutableList<String> ?= null, // array of strings or null for unknown; where the entry is commonly seen
+    val hearts_recovered: Float = 0.0f, // float; health recovered when eaten raw
+    val cooking_effect: String = "", // string; special effect when used in a dish/elixir (e.g. "stamina recovery"), empty if none
+    val dlc: Boolean = false, // boolean; whether the entry is from a DLC pack
+    /* TEARS OF THE KINGDOM ONLY */
+    // "fuse_attack_power": 0 // integer; damage added when fused with a weapon
+    /* */
+)
+
+@Serializable
+data class ApiResponseOneMaterial(
+    val data: Material,
     val message: String,
     val status: Int
 )
@@ -39,14 +97,21 @@ data class ApiResponseEquipment(
 
 @Serializable
 class Equipment(
-    val name: String, // string; entry name
-    val id: Int,  // integer; ID as shown in compendium
-    val category: String, // string; "equipment"
-    val description: String, // string; short paragraph
-    val image: String, // string; URL of image
-    val common_locations: MutableList<String>? = null, // array of strings or null for unknown; where the entry is commonly seen
-    val properties: Properties,
-    val dlc: Boolean // boolean; whether the entry is from a DLC pack
+    val name: String = "", // string; entry name
+    val id: Int = 0,  // integer; ID as shown in compendium
+    val category: String = "", // string; "equipment"
+    val description: String = "", // string; short paragraph
+    val image: String = "", // string; URL of image
+    val common_locations: MutableList<String> ?= null, // array of strings or null for unknown; where the entry is commonly seen
+    val properties: Properties = Properties(),
+    val dlc: Boolean = false // boolean; whether the entry is from a DLC pack
+)
+
+@Serializable
+data class ApiResponseOneEquipment(
+    val data: Equipment,
+    val message: String,
+    val status: Int
 )
 
 @Serializable
@@ -61,26 +126,6 @@ class Properties(
 
 @Serializable
 // Classe qui permet de récupérer la réponse de l'API directement
-data class ApiResponseMonsters(
-    val data: List<Monster>,
-    val message: String,
-    val status: Int
-)
-
-@Serializable
-class Monster(
-    val name: String, // string; entry name
-    val id: Int,  // integer; ID as shown in compendium
-    val category: String, // string; "monsters"
-    val description: String, // string; short paragraph
-    val image: String, // string; URL of image
-    val common_locations: MutableList<String>? = null, // array of strings or null for unknown; where the entry is commonly seen
-    val drops: MutableList<String>? = null, // array of strings or null for unknown; recoverable materials from killing
-    val dlc: Boolean // boolean; whether the entry is from a DLC pack
-)
-
-@Serializable
-// Classe qui permet de récupérer la réponse de l'API directement
 data class ApiResponseTreasures(
     val data: List<Treasure>,
     val message: String,
@@ -89,36 +134,19 @@ data class ApiResponseTreasures(
 
 @Serializable
 class Treasure(
-    val name: String, // string
-    val id: Int,  // integer; ID as shown in compendium
-    val category: String, // string; "treasure"
-    val description: String, // string; short paragraph
-    val image: String, // string; URL of image
-    val common_locations: MutableList<String>? = null, // array of strings or null for unknown; where the entry is commonly seen
-    val drops: MutableList<String>? = null, // array of strings or null for unknown; recoverable materials when accessed
-    val dlc: Boolean // boolean; whether the entry is from a DLC pack
+    val name: String = "", // string
+    val id: Int = 0,  // integer; ID as shown in compendium
+    val category: String = "", // string; "treasure"
+    val description: String = "", // string; short paragraph
+    val image: String = "", // string; URL of image
+    val common_locations: MutableList<String> ?= null, // array of strings or null for unknown; where the entry is commonly seen
+    val drops: MutableList<String> ?= null, // array of strings or null for unknown; recoverable materials when accessed
+    val dlc: Boolean = false // boolean; whether the entry is from a DLC pack
 )
 
 @Serializable
-// Classe qui permet de récupérer la réponse de l'API directement
-data class ApiResponseMaterials(
-    val data: List<Material>,
+data class ApiResponseOneTreasure(
+    val data: Treasure,
     val message: String,
     val status: Int
-)
-
-@Serializable
-class Material(
-    val name: String, // string; entry name
-    val id: Int, // integer; ID as shown in compendium
-    val category: String, // string; "materials"
-    val description: String, // string; short paragraph
-    val image: String, // string; URL of image
-    val common_locations: List<String>? = null, // array of strings or null for unknown; where the entry is commonly seen
-    val hearts_recovered: Float, // float; health recovered when eaten raw
-    val cooking_effect: String, // string; special effect when used in a dish/elixir (e.g. "stamina recovery"), empty if none
-    val dlc: Boolean, // boolean; whether the entry is from a DLC pack
-    /* TEARS OF THE KINGDOM ONLY */
-    // "fuse_attack_power": 0 // integer; damage added when fused with a weapon
-    /* */
 )

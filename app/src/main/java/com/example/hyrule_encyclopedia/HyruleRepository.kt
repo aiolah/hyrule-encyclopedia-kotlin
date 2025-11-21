@@ -74,4 +74,24 @@ class HyruleRepository {
         val response: ApiResponseOneCreature = client.get(urlEntry + id).body()
         return response.data
     }
+
+    suspend fun getOneMonster(id: Int): Monster {
+        val response: ApiResponseOneMonster = client.get(urlEntry + id).body()
+        return response.data
+    }
+
+    suspend fun getOneMaterial(id: Int): Material {
+        val response: ApiResponseOneMaterial = client.get(urlEntry + id).body()
+        return response.data
+    }
+
+    suspend fun getOneEquipment(id: Int): Equipment {
+        val response: ApiResponseOneEquipment = client.get(urlEntry + id).body()
+        return response.data
+    }
+
+    suspend fun getOneTreasure(id: Int): Treasure {
+        val response: ApiResponseOneTreasure = client.get(urlEntry + id).body()
+        return response.data
+    }
 }
