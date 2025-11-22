@@ -1,14 +1,16 @@
 package com.example.hyrule_encyclopedia
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.hyrule_encyclopedia.local_database.ItemEntity
+import com.example.hyrule_encyclopedia.local_database.SearchedItemDao
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class MainViewModel: ViewModel() {
-    val repository = HyruleRepository()
+class MainViewModel(application: Application) : AndroidViewModel(application) {
+    val repository = HyruleRepository(application)
     val creatures = MutableStateFlow(listOf<Creature>())
     val equipment = MutableStateFlow(listOf<Equipment>())
     val monsters = MutableStateFlow(listOf<Monster>())
@@ -19,6 +21,7 @@ class MainViewModel: ViewModel() {
     val material = MutableStateFlow(Material())
     val oneEquipment = MutableStateFlow(Equipment())
     val treasure = MutableStateFlow(Treasure())
+    val searchedItems = MutableStateFlow(listOf<ItemEntity>())
 
     fun getCreatures()
     {
@@ -50,6 +53,36 @@ class MainViewModel: ViewModel() {
         viewModelScope.launch { creature.value = repository.getOneCreature(id) }
     }
 
+    suspend fun getSearchedCreature(id: Int): Creature
+    {
+        return repository.getOneCreature(id)
+    }
+
+    suspend fun getSearchedMonster(id: Int): Monster
+    {
+        return repository.getOneMonster(id)
+    }
+
+    suspend fun getSearchedMaterial(id: Int): Material
+    {
+        return repository.getOneMaterial(id)
+    }
+
+    suspend fun getSearchedEquipment(id: Int): Equipment
+    {
+        return repository.getOneEquipment(id)
+    }
+
+    suspend fun getSearchedTreasure(id: Int): Treasure
+    {
+        return repository.getOneTreasure(id)
+    }
+
+    suspend fun getSearchedEntry(id: Int): Entry
+    {
+        return repository.getOneEntry(id)
+    }
+
     fun getOneMonster(id: Int)
     {
         viewModelScope.launch { monster.value = repository.getOneMonster(id) }
@@ -68,5 +101,16 @@ class MainViewModel: ViewModel() {
     fun getOneTreasure(id: Int)
     {
         viewModelScope.launch { treasure.value = repository.getOneTreasure(id) }
+    }
+
+    fun addSearchedItem(idItem: Int, category: String)
+    {
+        val itemEntity = ItemEntity(idItem = idItem, category = category)
+        viewModelScope.launch { repository.dao.addSearchedItem(itemEntity) }
+    }
+
+    fun getAllSearchedItems()
+    {
+        viewModelScope.launch { searchedItems.value = repository.dao.getAllSearchedItems() }
     }
 }

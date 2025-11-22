@@ -1,6 +1,9 @@
 package com.example.hyrule_encyclopedia
 
+import android.app.Application
 import android.util.Log
+import androidx.room.Room
+import com.example.hyrule_encyclopedia.local_database.AppDatabase
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -15,7 +18,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-class HyruleRepository {
+class HyruleRepository(application: Application) {
     val client: HttpClient = HttpClient(CIO) {
 
         install(ContentNegotiation) {
@@ -94,4 +97,14 @@ class HyruleRepository {
         val response: ApiResponseOneTreasure = client.get(urlEntry + id).body()
         return response.data
     }
+
+    suspend fun getOneEntry(id: Int): Entry {
+        val response: ApiResponseOneEntry = client.get(urlEntry + id).body()
+        return response.data
+    }
+
+    val database = Room.databaseBuilder(context = application, AppDatabase::class.java, "hyrule-database")
+        .fallbackToDestructiveMigration()
+        .build()
+    val dao = database.searchedItemDao()
 }
