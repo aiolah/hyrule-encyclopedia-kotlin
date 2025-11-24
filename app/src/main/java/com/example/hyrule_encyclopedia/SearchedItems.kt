@@ -56,9 +56,13 @@ fun SearchedItemsScreen(viewModel: MainViewModel, backStack: NavBackStack<NavKey
 
     Log.d("Valeur isLoading", isLoading.toString())
 
-    if(!isLoading)
+    if(!isLoading && searchedEntries.size > 0)
     {
         SearchedItemsGrid(searchedEntries, backStack)
+    }
+    else if(!isLoading && searchedEntries.size == 0)
+    {
+        Text("Aucun élément recherché pour l'instant", modifier = Modifier.padding(18.dp, 100.dp))
     }
 }
 

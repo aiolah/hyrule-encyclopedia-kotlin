@@ -110,25 +110,20 @@ class MainActivity : ComponentActivity() {
                 is EquipmentScreen -> titlePage = "Équipement"
                 is TreasuresScreen -> titlePage = "Trésors"
                 is SearchedItems -> titlePage = "Éléments recherchés"
-                is DetailEntryScreen -> returnArrow = true
+                is DetailEntryScreen -> {
+                    titlePage = ""
+                    returnArrow = true
+                }
             }
 
-            Log.d("Backstack", backStack.lastOrNull().toString())
+            // Log.d("Backstack", backStack.lastOrNull().toString())
 
             HyruleEncyclopediaTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar(
-                            title = {
-                                if (!returnArrow) {
-                                    Text(titlePage)
-                                }
-                                else
-                                {
-                                    Text("")
-                                }
-                            },
+                            title = { Text(titlePage) },
                             /*actions = {
 
                             }*/

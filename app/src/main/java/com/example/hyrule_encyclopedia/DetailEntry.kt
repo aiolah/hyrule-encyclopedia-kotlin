@@ -98,7 +98,7 @@ fun DetailComposable(name: String, image: String, description : String, id: Int,
 
     Column(
         modifier = Modifier
-            .padding(PaddingValues(start = 50.dp, top = 50.dp, end = 50.dp, bottom = 140.dp))
+            .padding(PaddingValues(start = 50.dp, top = 100.dp, end = 50.dp, bottom = 140.dp))
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
