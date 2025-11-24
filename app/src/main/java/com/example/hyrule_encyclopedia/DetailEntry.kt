@@ -13,12 +13,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,6 +81,21 @@ fun DetailEntry(id: Int, category: String, viewModel: MainViewModel, backStack: 
 
 @Composable
 fun DetailComposable(name: String, image: String, description : String, id: Int, category: String, common_locations: MutableList<String>?, drops: MutableList<String>?, cooking_effect: String, viewModel: MainViewModel) {
+    val itemEntity by viewModel.entry.collectAsStateWithLifecycle()
+    viewModel.getOneItem(id)
+    Log.d("Item", itemEntity.idItem.toString())
+
+    var isSearched by remember { mutableStateOf(true) }
+
+    if(itemEntity.idItem !== 0)
+    {
+        isSearched = true
+    }
+    else
+    {
+        isSearched = false
+    }
+
     Column(
         modifier = Modifier
             .padding(PaddingValues(start = 50.dp, top = 50.dp, end = 50.dp, bottom = 140.dp))
@@ -178,13 +200,34 @@ fun DetailComposable(name: String, image: String, description : String, id: Int,
             }
         }
 
-        Row {
-            Button(
-                onClick = {
-                    Log.d("Id de l'item recherché", id.toString())
-                    viewModel.addSearchedItem(idItem = id, category = category)
-            }) {
-                Text("Item recherché")
+        Row(
+            modifier = Modifier.padding(0.dp, 35.dp)
+        ) {
+            // Item recherché DONC présent en bdd : bouton suppression
+            if(isSearched)
+            {
+                Button(
+                    onClick = {
+                        Log.d("Id de l'item à supprimer", id.toString())
+                        viewModel.deleteItem(id)
+                        isSearched = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                ) {
+                    Text("Supprimer des éléments recherchés")
+                }
+            }
+            // Item non recherché DONC absent en bdd : bouton Ajouter dans éléments recherchés
+            else
+            {
+                Button(
+                    onClick = {
+                        Log.d("Id de l'item recherché", id.toString())
+                        viewModel.addSearchedItem(idItem = id, category = category)
+                        isSearched = true
+                    }) {
+                    Text("Ajouter dans éléments recherchés")
+                }
             }
         }
     }

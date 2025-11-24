@@ -10,9 +10,12 @@ interface SearchedItemDao {
     @Query("SELECT * FROM searchedItems")
     suspend fun getAllSearchedItems(): List<ItemEntity>
 
+    @Query("SELECT * FROM searchedItems WHERE idItem = :id")
+    suspend fun getOneItem(id: Int): ItemEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addSearchedItem(itemEntity: ItemEntity)
 
-    //@Query("DELETE FROM creaturesSearched WHERE id = :id")
-    //suspend fun deleteFilm(id: String)
+    @Query("DELETE FROM searchedItems WHERE idItem = :id")
+    suspend fun deleteItem(id: Int)
 }

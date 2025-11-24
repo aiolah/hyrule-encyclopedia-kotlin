@@ -22,16 +22,21 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -79,6 +84,7 @@ data class DetailEntryScreen(val id: Int, val category: String): NavKey
 data object SearchedItems: NavKey
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,10 +100,59 @@ class MainActivity : ComponentActivity() {
         setContent {
             // var screenSelected by remember { mutableStateOf("créatures") }
             val backStack = rememberNavBackStack(CreaturesScreen)
+            var titlePage = "Créatures"
+            var returnArrow = false
+
+            when(backStack.lastOrNull()) {
+                is CreaturesScreen -> titlePage = "Créatures"
+                is MonstersScreen -> titlePage = "Monstres"
+                is MaterialsScreen -> titlePage = "Matériaux"
+                is EquipmentScreen -> titlePage = "Équipement"
+                is TreasuresScreen -> titlePage = "Trésors"
+                is SearchedItems -> titlePage = "Éléments recherchés"
+                is DetailEntryScreen -> returnArrow = true
+            }
+
+            Log.d("Backstack", backStack.lastOrNull().toString())
 
             HyruleEncyclopediaTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                if (!returnArrow) {
+                                    Text(titlePage)
+                                }
+                                else
+                                {
+                                    Text("")
+                                }
+                            },
+                            /*actions = {
+
+                            }*/
+                            navigationIcon = {
+                                if (returnArrow) {
+                                    IconButton(onClick = { backStack.removeLastOrNull() }) {
+                                        Icon(
+                                            Icons.AutoMirrored.Filled.ArrowBack,
+                                            contentDescription = "Retour"
+                                        )
+                                    }
+                                }
+                            },
+
+                            /*actions = {
+                                IconButton(onClick = { backStack.add(Destination3) }) {
+                                    Icon(
+                                        Icons.Default.FavoriteBorder,
+                                        contentDescription = "Favorite"
+                                    )
+                                }
+                            }*/
+                        )
+                    },
                     bottomBar = {
                         NavigationBar(
                             containerColor = backgroundNavigationBar2,
@@ -269,7 +324,7 @@ fun CreaturesGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(5.dp),
-        contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
+        contentPadding = PaddingValues(start = 0.dp, top = 100.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(creatures.sortedBy { it.id }) { creature ->
             ItemCard(creature.name, creature.id, creature.image, creature.category, backStack)
@@ -285,7 +340,7 @@ fun EquipmentGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(5.dp),
-        contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
+        contentPadding = PaddingValues(start = 0.dp, top = 100.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(equipment.sortedBy { it.id }) { item ->
             ItemCard(item.name, item.id, item.image, item.category, backStack)
@@ -301,7 +356,7 @@ fun MonstersGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(5.dp),
-        contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
+        contentPadding = PaddingValues(start = 0.dp, top = 100.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(monsters.sortedBy { it.id }) { monster ->
             ItemCard(monster.name, monster.id, monster.image, monster.category, backStack)
@@ -317,7 +372,7 @@ fun TreasuresGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(5.dp),
-        contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
+        contentPadding = PaddingValues(start = 0.dp, top = 100.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(treasures.sortedBy { it.id }) { treasure ->
             ItemCard(treasure.name, treasure.id, treasure.image, treasure.category, backStack)
@@ -333,7 +388,7 @@ fun MaterialsGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(5.dp),
-        contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
+        contentPadding = PaddingValues(start = 0.dp, top = 100.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(materials.sortedBy { it.id }) { material ->
             ItemCard(material.name, material.id, material.image, material.category, backStack)

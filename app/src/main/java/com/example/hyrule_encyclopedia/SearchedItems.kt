@@ -67,7 +67,7 @@ fun SearchedItemsGrid(searchedEntries: SnapshotStateList<Entry>, backStack: NavB
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(5.dp),
-        contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
+        contentPadding = PaddingValues(start = 0.dp, top = 100.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(searchedEntries.sortedBy { it.id }) { entry ->
             ItemCard(entry.name, entry.id, entry.image, entry.category, backStack)

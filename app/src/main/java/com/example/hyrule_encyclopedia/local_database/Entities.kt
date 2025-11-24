@@ -31,6 +31,6 @@ class Converters(moshi: Moshi) {
 @Entity(tableName = "searchedItems")
 data class ItemEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val idItem: Int,
-    val category: String
+    val idItem: Int = 0,
+    val category: String = ""
 )

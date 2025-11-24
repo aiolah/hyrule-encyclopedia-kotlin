@@ -1,6 +1,7 @@
 package com.example.hyrule_encyclopedia
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,6 +23,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val oneEquipment = MutableStateFlow(Equipment())
     val treasure = MutableStateFlow(Treasure())
     val searchedItems = MutableStateFlow(listOf<ItemEntity>())
+    val entry = MutableStateFlow(ItemEntity())
 
     fun getCreatures()
     {
@@ -87,5 +89,28 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun getAllSearchedItems()
     {
         viewModelScope.launch { searchedItems.value = repository.dao.getAllSearchedItems() }
+    }
+
+    fun getOneItem(id: Int)
+    {
+        viewModelScope.launch {
+            val result = repository.dao.getOneItem(id)
+
+            if(result != null)
+            {
+                entry.value = result
+                Log.d("Résultat getOneItem", result.category)
+            }
+            else
+            {
+                entry.value = ItemEntity()
+                Log.d("Résultat getOneItem", "NULL")
+            }
+        }
+    }
+
+    fun deleteItem(id: Int)
+    {
+        viewModelScope.launch { repository.dao.deleteItem(id) }
     }
 }
