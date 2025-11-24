@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 fun SearchedItemsScreen(viewModel: MainViewModel, backStack: NavBackStack<NavKey>)
 {
     val searchedItems by viewModel.searchedItems.collectAsStateWithLifecycle()
-    /*val idCreatures = remember { mutableStateListOf<Int>() }
+    val idCreatures = remember { mutableStateListOf<Int>() }
     val idMonsters = remember { mutableStateListOf<Int>() }
     val idMaterials = remember { mutableStateListOf<Int>() }
     val idEquipment = remember { mutableStateListOf<Int>() }
@@ -41,9 +41,9 @@ fun SearchedItemsScreen(viewModel: MainViewModel, backStack: NavBackStack<NavKey
     val searchedMonsters = remember { mutableStateListOf<Monster>() }
     val searchedMaterials = remember { mutableStateListOf<Material>() }
     val searchedEquipment = remember { mutableStateListOf<Equipment>() }
-    val searchedTreasures = remember { mutableStateListOf<Treasure>() }*/
+    val searchedTreasures = remember { mutableStateListOf<Treasure>() }
 
-    val searchedEntries = remember { mutableStateListOf<Entry>() }
+    // val searchedEntries = remember { mutableStateListOf<Entry>() }
 
     var isLoading by remember { mutableStateOf(true) }
 
@@ -74,8 +74,7 @@ fun SearchedItemsScreen(viewModel: MainViewModel, backStack: NavBackStack<NavKey
             searchedCreatures.add(creature)
         }*/
 
-        // CODE QUI FONCTIONNE
-        /*idCreatures.clear()
+        idCreatures.clear()
         idMonsters.clear()
         idMaterials.clear()
         idEquipment.clear()
@@ -140,9 +139,9 @@ fun SearchedItemsScreen(viewModel: MainViewModel, backStack: NavBackStack<NavKey
         }
 
         searchedTreasures.clear()
-        searchedTreasures.addAll(treasures)*/
+        searchedTreasures.addAll(treasures)
 
-        val entries = coroutineScope {
+        /*val entries = coroutineScope {
             searchedItems.map {
                 async { viewModel.getSearchedEntry(it.idItem)
                 }
@@ -150,7 +149,7 @@ fun SearchedItemsScreen(viewModel: MainViewModel, backStack: NavBackStack<NavKey
         }
 
         searchedEntries.clear()
-        searchedEntries.addAll(entries)
+        searchedEntries.addAll(entries)*/
 
         isLoading = false
     }
@@ -173,18 +172,18 @@ fun SearchedItemsScreen(viewModel: MainViewModel, backStack: NavBackStack<NavKey
             }
         }*/
 
-        SearchedItemsGrid(/*searchedCreatures, searchedMonsters, searchedMaterials, searchedEquipment, searchedTreasures,*/ searchedEntries, backStack)
+        SearchedItemsGrid(searchedCreatures, searchedMonsters, searchedMaterials, searchedEquipment, searchedTreasures, /*searchedEntries,*/ backStack)
     }
 }
 
 @Composable
-fun SearchedItemsGrid(/*searchedCreatures: SnapshotStateList<Creature>, searchedMonsters: SnapshotStateList<Monster>, searchedMaterials: SnapshotStateList<Material>, searchedEquipment: SnapshotStateList<Equipment>, searchedTreasure: SnapshotStateList<Treasure>,*/ searchedEntries: SnapshotStateList<Entry>, backStack: NavBackStack<NavKey>) {
+fun SearchedItemsGrid(searchedCreatures: SnapshotStateList<Creature>, searchedMonsters: SnapshotStateList<Monster>, searchedMaterials: SnapshotStateList<Material>, searchedEquipment: SnapshotStateList<Equipment>, searchedTreasure: SnapshotStateList<Treasure>, /*searchedEntries: SnapshotStateList<Entry>,*/ backStack: NavBackStack<NavKey>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(5.dp),
         contentPadding = PaddingValues(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 130.dp)
     ) {
-        /*items(searchedCreatures) { creature ->
+        items(searchedCreatures) { creature ->
             ItemCard(creature.name, creature.id, creature.image, creature.category, backStack)
         }
         items(searchedMonsters) { monster ->
@@ -198,10 +197,10 @@ fun SearchedItemsGrid(/*searchedCreatures: SnapshotStateList<Creature>, searched
         }
         items(searchedTreasure) { treasure ->
             ItemCard(treasure.name, treasure.id, treasure.image, treasure.category, backStack)
-        }*/
-
-        items(searchedEntries.sortedBy { it.id }) { entry ->
-            ItemCard(entry.name, entry.id, entry.image, entry.category, backStack)
         }
+
+        /*items(searchedEntries.sortedBy { it.id }) { entry ->
+            ItemCard(entry.name, entry.id, entry.image, entry.category, backStack)
+        }*/
     }
 }

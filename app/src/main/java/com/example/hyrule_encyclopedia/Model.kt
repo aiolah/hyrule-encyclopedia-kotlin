@@ -151,7 +151,7 @@ data class ApiResponseOneTreasure(
     val status: Int
 )
 
-@Serializable
+/*@Serializable
 data class ApiResponseOneEntry(
     val data: Entry,
     val message: String,
@@ -164,4 +164,4 @@ class Entry(
     val id: Int = 0,  // integer; ID as shown in compendium
     val category: String = "", // string; "treasure"
     val image: String = "", // string; URL of image
-)
+)*/

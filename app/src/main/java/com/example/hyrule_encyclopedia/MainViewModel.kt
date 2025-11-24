@@ -78,10 +78,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return repository.getOneTreasure(id)
     }
 
-    suspend fun getSearchedEntry(id: Int): Entry
+    /*suspend fun getSearchedEntry(id: Int): Entry
     {
         return repository.getOneEntry(id)
-    }
+    }*/
 
     fun getOneMonster(id: Int)
     {

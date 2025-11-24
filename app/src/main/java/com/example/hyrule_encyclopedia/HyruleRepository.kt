@@ -98,10 +98,10 @@ class HyruleRepository(application: Application) {
         return response.data
     }
 
-    suspend fun getOneEntry(id: Int): Entry {
+    /*suspend fun getOneEntry(id: Int): Entry {
         val response: ApiResponseOneEntry = client.get(urlEntry + id).body()
         return response.data
-    }
+    }*/
 
     val database = Room.databaseBuilder(context = application, AppDatabase::class.java, "hyrule-database")
         .fallbackToDestructiveMigration()
