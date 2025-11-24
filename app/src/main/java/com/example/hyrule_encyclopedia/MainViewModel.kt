@@ -53,35 +53,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { creature.value = repository.getOneCreature(id) }
     }
 
-    suspend fun getSearchedCreature(id: Int): Creature
-    {
-        return repository.getOneCreature(id)
-    }
-
-    suspend fun getSearchedMonster(id: Int): Monster
-    {
-        return repository.getOneMonster(id)
-    }
-
-    suspend fun getSearchedMaterial(id: Int): Material
-    {
-        return repository.getOneMaterial(id)
-    }
-
-    suspend fun getSearchedEquipment(id: Int): Equipment
-    {
-        return repository.getOneEquipment(id)
-    }
-
-    suspend fun getSearchedTreasure(id: Int): Treasure
-    {
-        return repository.getOneTreasure(id)
-    }
-
-    /*suspend fun getSearchedEntry(id: Int): Entry
+    suspend fun getSearchedEntry(id: Int): Entry
     {
         return repository.getOneEntry(id)
-    }*/
+    }
 
     fun getOneMonster(id: Int)
     {
