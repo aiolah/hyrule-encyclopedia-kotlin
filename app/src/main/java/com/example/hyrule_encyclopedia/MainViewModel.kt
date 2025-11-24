@@ -99,12 +99,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             if(result != null)
             {
                 entry.value = result
-                Log.d("Résultat getOneItem", result.category)
             }
             else
             {
                 entry.value = ItemEntity()
-                Log.d("Résultat getOneItem", "NULL")
             }
         }
     }

@@ -158,6 +158,7 @@ data class ApiResponseOneEntry(
     val status: Int
 )
 
+// Classe permettant de récupérer une entry de n'importe quelle catégorie
 @Serializable
 class Entry(
     val name: String = "", // string

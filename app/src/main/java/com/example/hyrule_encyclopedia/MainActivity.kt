@@ -116,8 +116,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            // Log.d("Backstack", backStack.lastOrNull().toString())
-
             HyruleEncyclopediaTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -227,14 +225,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 ) { innerPadding ->
-                    // CreatureText(viewmodel)
-                    // logCreature(viewmodel, modifier = Modifier.padding(innerPadding))
-
-                    // MaterialsGrid(viewmodel)
-                    // TreasuresGrid(viewmodel)
-                    // MonstersGrid(viewmodel)
-                    // EquipmentGrid(viewmodel)
-                    // CreaturesGrid(viewmodel)
 
                     NavDisplay(
                         backStack = backStack,
@@ -284,28 +274,6 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun logCreature(viewModel: MainViewModel, modifier: Modifier)
-{
-    val creatures by viewModel.creatures.collectAsStateWithLifecycle()
-
-    creatures.forEach { Log.d("API", it.name) }
-}
-
-@Composable
-fun CreatureText(viewModel: MainViewModel)
-{
-    val creatures by viewModel.creatures.collectAsStateWithLifecycle()
-
-    Box() {
-        Column {
-            creatures.forEach {
-                Text(it.name)
             }
         }
     }

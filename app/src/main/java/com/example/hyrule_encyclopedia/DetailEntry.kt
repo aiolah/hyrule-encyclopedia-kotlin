@@ -39,43 +39,37 @@ import com.example.hyrule_encyclopedia.ui.theme.onPrimaryContainerLight
 
 @Composable
 fun DetailEntry(id: Int, category: String, viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
-    if(category == "creatures")
-    {
-        val creature by viewModel.creature.collectAsStateWithLifecycle()
-        LaunchedEffect(key1 = true) { viewModel.getOneCreature(id) }
+    when(category) {
+        "creatures" -> {
+            val creature by viewModel.creature.collectAsStateWithLifecycle()
+            LaunchedEffect(key1 = true) { viewModel.getOneCreature(id) }
 
-        // Log.d("Test", id.toString())
-        // Log.d("Test", creature.name)
+            DetailComposable(creature.name, creature.image, creature.description, creature.id, creature.category, creature.common_locations, creature.drops, "", viewModel)
+        }
+        "monsters" -> {
+            val monster by viewModel.monster.collectAsStateWithLifecycle()
+            LaunchedEffect(key1 = true) { viewModel.getOneMonster(id) }
 
-        DetailComposable(creature.name, creature.image, creature.description, creature.id, creature.category, creature.common_locations, creature.drops, "", viewModel)
-    }
-    else if(category == "monsters")
-    {
-        val monster by viewModel.monster.collectAsStateWithLifecycle()
-        LaunchedEffect(key1 = true) { viewModel.getOneMonster(id) }
+            DetailComposable(monster.name, monster.image, monster.description, monster.id, monster.category, monster.common_locations, monster.drops, "", viewModel)
+        }
+        "materials" -> {
+            val material by viewModel.material.collectAsStateWithLifecycle()
+            LaunchedEffect(key1 = true) { viewModel.getOneMaterial(id) }
 
-        DetailComposable(monster.name, monster.image, monster.description, monster.id, monster.category, monster.common_locations, monster.drops, "", viewModel)
-    }
-    else if(category == "materials")
-    {
-        val material by viewModel.material.collectAsStateWithLifecycle()
-        LaunchedEffect(key1 = true) { viewModel.getOneMaterial(id) }
+            DetailComposable(material.name, material.image, material.description, material.id, material.category, material.common_locations, null, material.cooking_effect, viewModel)
+        }
+        "equipment" -> {
+            val equipment by viewModel.oneEquipment.collectAsStateWithLifecycle()
+            LaunchedEffect(key1 = true) { viewModel.getOneEquipment(id) }
 
-        DetailComposable(material.name, material.image, material.description, material.id, material.category, material.common_locations, null, material.cooking_effect, viewModel)
-    }
-    else if(category == "equipment")
-    {
-        val equipment by viewModel.oneEquipment.collectAsStateWithLifecycle()
-        LaunchedEffect(key1 = true) { viewModel.getOneEquipment(id) }
+            DetailComposable(equipment.name, equipment.image, equipment.description, equipment.id, equipment.category, equipment.common_locations, null, "", viewModel)
+        }
+        "treasure" -> {
+            val treasure by viewModel.treasure.collectAsStateWithLifecycle()
+            LaunchedEffect(key1 = true) { viewModel.getOneTreasure(id) }
 
-        DetailComposable(equipment.name, equipment.image, equipment.description, equipment.id, equipment.category, equipment.common_locations, null, "", viewModel)
-    }
-    else if(category == "treasure")
-    {
-        val treasure by viewModel.treasure.collectAsStateWithLifecycle()
-        LaunchedEffect(key1 = true) { viewModel.getOneTreasure(id) }
-
-        DetailComposable(treasure.name, treasure.image, treasure.description, treasure.id, treasure.category, treasure.common_locations, treasure.drops, "", viewModel)
+            DetailComposable(treasure.name, treasure.image, treasure.description, treasure.id, treasure.category, treasure.common_locations, treasure.drops, "", viewModel)
+        }
     }
 }
 
@@ -83,7 +77,6 @@ fun DetailEntry(id: Int, category: String, viewModel: MainViewModel, backStack: 
 fun DetailComposable(name: String, image: String, description : String, id: Int, category: String, common_locations: MutableList<String>?, drops: MutableList<String>?, cooking_effect: String, viewModel: MainViewModel) {
     val itemEntity by viewModel.entry.collectAsStateWithLifecycle()
     viewModel.getOneItem(id)
-    Log.d("Item", itemEntity.idItem.toString())
 
     var isSearched by remember { mutableStateOf(true) }
 
@@ -208,7 +201,6 @@ fun DetailComposable(name: String, image: String, description : String, id: Int,
             {
                 Button(
                     onClick = {
-                        Log.d("Id de l'item à supprimer", id.toString())
                         viewModel.deleteItem(id)
                         isSearched = false
                     },
@@ -222,7 +214,6 @@ fun DetailComposable(name: String, image: String, description : String, id: Int,
             {
                 Button(
                     onClick = {
-                        Log.d("Id de l'item recherché", id.toString())
                         viewModel.addSearchedItem(idItem = id, category = category)
                         isSearched = true
                     }) {
