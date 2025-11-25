@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class ItemEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val idItem: Int = 0,
-    val category: String = ""
+    val category: String = "",
+    val game: String = ""
 )

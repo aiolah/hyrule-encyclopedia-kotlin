@@ -2,6 +2,7 @@ package com.example.hyrule_encyclopedia
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,66 +24,68 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val oneEquipment = MutableStateFlow(Equipment())
     val treasure = MutableStateFlow(Treasure())
     val searchedItems = MutableStateFlow(listOf<ItemEntity>())
+    val searchedItemsBotw = MutableStateFlow(listOf<ItemEntity>())
+    val searchedItemsTotk = MutableStateFlow(listOf<ItemEntity>())
     val entry = MutableStateFlow(ItemEntity())
 
-    fun getCreatures()
+    fun getCreatures(game: String)
     {
-        viewModelScope.launch { creatures.value = repository.getCreatures() }
+        viewModelScope.launch { creatures.value = repository.getCreatures(game) }
     }
 
-    fun getEquipment()
+    fun getEquipment(game: String)
     {
-        viewModelScope.launch { equipment.value = repository.getEquipment() }
+        viewModelScope.launch { equipment.value = repository.getEquipment(game) }
     }
 
-    fun getMonsters()
+    fun getMonsters(game: String)
     {
-        viewModelScope.launch { monsters.value = repository.getMonsters() }
+        viewModelScope.launch { monsters.value = repository.getMonsters(game) }
     }
 
-    fun getTreasures()
+    fun getTreasures(game: String)
     {
-        viewModelScope.launch { treasures.value = repository.getTreasures() }
+        viewModelScope.launch { treasures.value = repository.getTreasures(game) }
     }
 
-    fun getMaterials()
+    fun getMaterials(game: String)
     {
-        viewModelScope.launch { materials.value = repository.getMaterials() }
+        viewModelScope.launch { materials.value = repository.getMaterials(game) }
     }
 
-    fun getOneCreature(id: Int)
+    fun getOneCreature(id: Int, game: String)
     {
-        viewModelScope.launch { creature.value = repository.getOneCreature(id) }
+        viewModelScope.launch { creature.value = repository.getOneCreature(id, game) }
     }
 
-    suspend fun getSearchedEntry(id: Int): Entry
+    suspend fun getSearchedEntry(id: Int, game: String): Entry
     {
-        return repository.getOneEntry(id)
+        return repository.getOneEntry(id, game)
     }
 
-    fun getOneMonster(id: Int)
+    fun getOneMonster(id: Int, game: String)
     {
-        viewModelScope.launch { monster.value = repository.getOneMonster(id) }
+        viewModelScope.launch { monster.value = repository.getOneMonster(id, game) }
     }
 
-    fun getOneMaterial(id: Int)
+    fun getOneMaterial(id: Int, game: String)
     {
-        viewModelScope.launch { material.value = repository.getOneMaterial(id) }
+        viewModelScope.launch { material.value = repository.getOneMaterial(id, game) }
     }
 
-    fun getOneEquipment(id: Int)
+    fun getOneEquipment(id: Int, game: String)
     {
-        viewModelScope.launch { oneEquipment.value = repository.getOneEquipment(id) }
+        viewModelScope.launch { oneEquipment.value = repository.getOneEquipment(id, game) }
     }
 
-    fun getOneTreasure(id: Int)
+    fun getOneTreasure(id: Int, game: String)
     {
-        viewModelScope.launch { treasure.value = repository.getOneTreasure(id) }
+        viewModelScope.launch { treasure.value = repository.getOneTreasure(id, game) }
     }
 
-    fun addSearchedItem(idItem: Int, category: String)
+    fun addSearchedItem(idItem: Int, category: String, game: String)
     {
-        val itemEntity = ItemEntity(idItem = idItem, category = category)
+        val itemEntity = ItemEntity(idItem = idItem, category = category, game = game)
         viewModelScope.launch { repository.dao.addSearchedItem(itemEntity) }
     }
 
@@ -91,10 +94,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { searchedItems.value = repository.dao.getAllSearchedItems() }
     }
 
-    fun getOneItem(id: Int)
+    fun getAllSearchedItemsBotw()
+    {
+        viewModelScope.launch { searchedItemsBotw.value = repository.dao.getAllSearchedItemsBotw() }
+    }
+
+    fun getAllSearchedItemsTotk()
+    {
+        viewModelScope.launch { searchedItemsTotk.value = repository.dao.getAllSearchedItemsTotk() }
+    }
+
+    fun getOneItem(id: Int, game: String)
     {
         viewModelScope.launch {
-            val result = repository.dao.getOneItem(id)
+            val result = repository.dao.getOneItem(id, game)
 
             if(result != null)
             {
@@ -107,8 +120,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun deleteItem(id: Int)
+    fun deleteItem(id: Int, game: String)
     {
-        viewModelScope.launch { repository.dao.deleteItem(id) }
+        viewModelScope.launch { repository.dao.deleteItem(id, game) }
     }
 }
