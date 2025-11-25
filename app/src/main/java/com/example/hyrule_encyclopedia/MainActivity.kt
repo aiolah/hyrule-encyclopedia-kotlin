@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,11 +40,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,6 +61,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.room.Room
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.example.hyrule_encyclopedia.local_database.AppDatabase
 import com.example.hyrule_encyclopedia.ui.theme.HyruleEncyclopediaTheme
 import com.example.hyrule_encyclopedia.ui.theme.backgroundNavigationBar2
@@ -79,7 +85,7 @@ data object EquipmentScreen: NavKey
 @Serializable
 data object TreasuresScreen: NavKey
 @Serializable
-data class DetailEntryScreen(val id: Int, val category: String): NavKey
+data class DetailEntryScreen(val id: Int, val category: String, val game: String): NavKey
 @Serializable
 data object SearchedItems: NavKey
 
@@ -91,17 +97,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val viewmodel: MainViewModel by viewModels()
-        viewmodel.getCreatures()
-        viewmodel.getEquipment()
-        viewmodel.getMonsters()
-        viewmodel.getTreasures()
-        viewmodel.getMaterials()
 
         setContent {
-            // var screenSelected by remember { mutableStateOf("créatures") }
             val backStack = rememberNavBackStack(CreaturesScreen)
             var titlePage = "Créatures"
             var returnArrow = false
+            var actionIcon = true
+            var totkIcon by remember { mutableStateOf(false) }
+            var game by remember { mutableStateOf("botw") }
 
             when(backStack.lastOrNull()) {
                 is CreaturesScreen -> titlePage = "Créatures"
@@ -109,10 +112,14 @@ class MainActivity : ComponentActivity() {
                 is MaterialsScreen -> titlePage = "Matériaux"
                 is EquipmentScreen -> titlePage = "Équipement"
                 is TreasuresScreen -> titlePage = "Trésors"
-                is SearchedItems -> titlePage = "Éléments recherchés"
+                is SearchedItems -> {
+                    titlePage = "Éléments recherchés"
+                    actionIcon = false
+                }
                 is DetailEntryScreen -> {
                     titlePage = ""
                     returnArrow = true
+                    actionIcon = false
                 }
             }
 
@@ -121,7 +128,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar(
-                            title = { Text(titlePage) },
+                            title = { Text(titlePage, fontFamily = funnelSansFontFamily) },
                             /*actions = {
 
                             }*/
@@ -135,15 +142,40 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             },
-
-                            /*actions = {
-                                IconButton(onClick = { backStack.add(Destination3) }) {
-                                    Icon(
-                                        Icons.Default.FavoriteBorder,
-                                        contentDescription = "Favorite"
-                                    )
+                            actions = {
+                                if(totkIcon && actionIcon)
+                                {
+                                    IconButton(
+                                        onClick = {
+                                            game = "botw"
+                                            totkIcon = false
+                                        },
+                                        modifier = Modifier.padding(0.dp, 0.dp, 5.dp, 0.dp)
+                                    ) {
+                                        Icon(
+                                            painterResource(R.drawable.logo_totk),
+                                            contentDescription = "Logo TOTK",
+                                            tint = Color.Unspecified
+                                        )
+                                    }
                                 }
-                            }*/
+                                else if(actionIcon)
+                                {
+                                    IconButton(
+                                        onClick = {
+                                            game = "totk"
+                                            totkIcon = true
+                                        },
+                                        modifier = Modifier.padding(0.dp, 0.dp, 5.dp, 0.dp)
+                                    ) {
+                                        Icon(
+                                            painterResource(R.drawable.logo_botw),
+                                            contentDescription = "Logo BOTW",
+                                            tint = Color.Unspecified
+                                        )
+                                    }
+                                }
+                            }
                         )
                     },
                     bottomBar = {
@@ -260,14 +292,14 @@ class MainActivity : ComponentActivity() {
                         }*/
 
                         entryProvider = entryProvider {
-                            entry<CreaturesScreen> { CreaturesGrid(viewmodel, backStack) }
-                            entry<MonstersScreen> { MonstersGrid(viewmodel, backStack) }
-                            entry<MaterialsScreen> { MaterialsGrid(viewmodel, backStack) }
-                            entry<EquipmentScreen> { EquipmentGrid(viewmodel, backStack) }
-                            entry<TreasuresScreen> { TreasuresGrid(viewmodel, backStack) }
+                            entry<CreaturesScreen> { CreaturesGrid(viewmodel, backStack, game) }
+                            entry<MonstersScreen> { MonstersGrid(viewmodel, backStack, game) }
+                            entry<MaterialsScreen> { MaterialsGrid(viewmodel, backStack, game) }
+                            entry<EquipmentScreen> { EquipmentGrid(viewmodel, backStack, game) }
+                            entry<TreasuresScreen> { TreasuresGrid(viewmodel, backStack, game) }
 
                             entry<DetailEntryScreen> {
-                                key -> DetailEntry(key.id, key.category, viewmodel, backStack)
+                                key -> DetailEntry(key.id, key.category, key.game, viewmodel, backStack)
                             }
 
                             entry<SearchedItems> { SearchedItemsScreen(viewmodel, backStack) }
@@ -281,8 +313,10 @@ class MainActivity : ComponentActivity() {
 
 // Grille verticale contenant les cards des créatures
 @Composable
-fun CreaturesGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
+fun CreaturesGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>, game: String) {
     val creatures by viewModel.creatures.collectAsStateWithLifecycle()
+
+    viewModel.getCreatures(game)
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -290,15 +324,16 @@ fun CreaturesGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
         contentPadding = PaddingValues(start = 0.dp, top = 100.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(creatures.sortedBy { it.id }) { creature ->
-            ItemCard(creature.name, creature.id, creature.image, creature.category, backStack)
+            ItemCard(creature.name, creature.id, creature.image, creature.category, backStack, game)
         }
     }
 }
 
 // Grille verticale contenant les cards des équipements
 @Composable
-fun EquipmentGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
+fun EquipmentGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>, game: String) {
     val equipment by viewModel.equipment.collectAsStateWithLifecycle()
+    viewModel.getEquipment(game)
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -306,15 +341,16 @@ fun EquipmentGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
         contentPadding = PaddingValues(start = 0.dp, top = 100.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(equipment.sortedBy { it.id }) { item ->
-            ItemCard(item.name, item.id, item.image, item.category, backStack)
+            ItemCard(item.name, item.id, item.image, item.category, backStack, game)
         }
     }
 }
 
 // Grille verticale contenant les cards des monstres
 @Composable
-fun MonstersGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
+fun MonstersGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>, game: String) {
     val monsters by viewModel.monsters.collectAsStateWithLifecycle()
+    viewModel.getMonsters(game)
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -322,15 +358,16 @@ fun MonstersGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
         contentPadding = PaddingValues(start = 0.dp, top = 100.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(monsters.sortedBy { it.id }) { monster ->
-            ItemCard(monster.name, monster.id, monster.image, monster.category, backStack)
+            ItemCard(monster.name, monster.id, monster.image, monster.category, backStack, game)
         }
     }
 }
 
 // Grille verticale contenant les cards des trésors
 @Composable
-fun TreasuresGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
+fun TreasuresGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>, game: String) {
     val treasures by viewModel.treasures.collectAsStateWithLifecycle()
+    viewModel.getTreasures(game)
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -338,15 +375,16 @@ fun TreasuresGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
         contentPadding = PaddingValues(start = 0.dp, top = 100.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(treasures.sortedBy { it.id }) { treasure ->
-            ItemCard(treasure.name, treasure.id, treasure.image, treasure.category, backStack)
+            ItemCard(treasure.name, treasure.id, treasure.image, treasure.category, backStack, game)
         }
     }
 }
 
 // Grille verticale contenant les cards des matériaux
 @Composable
-fun MaterialsGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
+fun MaterialsGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>, game: String) {
     val materials by viewModel.materials.collectAsStateWithLifecycle()
+    viewModel.getMaterials(game)
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -354,14 +392,14 @@ fun MaterialsGrid(viewModel: MainViewModel, backStack: NavBackStack<NavKey>) {
         contentPadding = PaddingValues(start = 0.dp, top = 100.dp, end = 0.dp, bottom = 130.dp)
     ) {
         items(materials.sortedBy { it.id }) { material ->
-            ItemCard(material.name, material.id, material.image, material.category, backStack)
+            ItemCard(material.name, material.id, material.image, material.category, backStack, game)
         }
     }
 }
 
 // Card unique à toutes les catégories qui affiche l'image, le nom et l'id d'un élément
 @Composable
-fun ItemCard(name: String, id: Int, url: String?, category: String, backStack: NavBackStack<NavKey>) {
+fun ItemCard(name: String, id: Int, url: String?, category: String, backStack: NavBackStack<NavKey>, game: String) {
 
     val configuration = LocalConfiguration.current
 
@@ -376,7 +414,7 @@ fun ItemCard(name: String, id: Int, url: String?, category: String, backStack: N
             defaultElevation = 6.dp
         ),
         onClick = {
-            backStack.add(DetailEntryScreen(id, category))
+            backStack.add(DetailEntryScreen(id, category, game))
         }
     ) {
         Column(

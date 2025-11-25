@@ -43,63 +43,110 @@ class HyruleRepository(application: Application) {
     val urlEntry = "https://botw-compendium.herokuapp.com/api/v3/compendium/entry/"
 
     // Récupération des créatures
-    suspend fun getCreatures() : List<Creature> {
-        val response: ApiResponseCreatures = client.get(urlCategory + "creatures").body()
+    suspend fun getCreatures(game: String) : List<Creature> {
+        var response: ApiResponseCreatures
+
+        response = client.get(urlCategory + "creatures") {
+            url {
+                parameters.append("game", game)
+            }
+        }.body()
+
         return response.data
     }
 
     // Récupération de tous les équipements
-    suspend fun getEquipment() : List<Equipment> {
-        val response: ApiResponseEquipment = client.get(urlCategory + "equipment").body()
+    suspend fun getEquipment(game: String) : List<Equipment> {
+        val response: ApiResponseEquipment = client.get(urlCategory + "equipment") {
+            url {
+                parameters.append("game", game)
+            }
+        }.body()
         return response.data
     }
 
     // Récupération de tous les monstres
-    suspend fun getMonsters() : List<Monster> {
-        val response: ApiResponseMonsters = client.get(urlCategory + "monsters").body()
+    suspend fun getMonsters(game: String) : List<Monster> {
+        val response: ApiResponseMonsters = client.get(urlCategory + "monsters") {
+            url {
+                parameters.append("game", game)
+            }
+        }.body()
         return response.data
     }
 
     // Récupération de tous les types de trésors
-    suspend fun getTreasures() : List<Treasure> {
-        val response: ApiResponseTreasures = client.get(urlCategory + "treasure").body()
+    suspend fun getTreasures(game: String) : List<Treasure> {
+        val response: ApiResponseTreasures = client.get(urlCategory + "treasure") {
+            url {
+                parameters.append("game", game)
+            }
+        }.body()
         return response.data
     }
 
     // Récupération de tous les matériaux
-    suspend fun getMaterials() : List<Material> {
-        val response: ApiResponseMaterials = client.get(urlCategory + "materials").body()
+    suspend fun getMaterials(game: String) : List<Material> {
+        val response: ApiResponseMaterials = client.get(urlCategory + "materials") {
+            url {
+                parameters.append("game", game)
+            }
+        }.body()
         return response.data
     }
 
     // Récupération d'une créature
-    suspend fun getOneCreature(id: Int): Creature {
-        val response: ApiResponseOneCreature = client.get(urlEntry + id).body()
+    suspend fun getOneCreature(id: Int, game: String): Creature {
+        val response: ApiResponseOneCreature = client.get(urlEntry + id) {
+            url {
+                parameters.append("game", game)
+            }
+        }.body()
         return response.data
     }
 
-    suspend fun getOneMonster(id: Int): Monster {
-        val response: ApiResponseOneMonster = client.get(urlEntry + id).body()
+    suspend fun getOneMonster(id: Int, game: String): Monster {
+        val response: ApiResponseOneMonster = client.get(urlEntry + id) {
+            url {
+                parameters.append("game", game)
+            }
+        }.body()
         return response.data
     }
 
-    suspend fun getOneMaterial(id: Int): Material {
-        val response: ApiResponseOneMaterial = client.get(urlEntry + id).body()
+    suspend fun getOneMaterial(id: Int, game: String): Material {
+        val response: ApiResponseOneMaterial = client.get(urlEntry + id) {
+            url {
+                parameters.append("game", game)
+            }
+        }.body()
         return response.data
     }
 
-    suspend fun getOneEquipment(id: Int): Equipment {
-        val response: ApiResponseOneEquipment = client.get(urlEntry + id).body()
+    suspend fun getOneEquipment(id: Int, game: String): Equipment {
+        val response: ApiResponseOneEquipment = client.get(urlEntry + id) {
+            url {
+                parameters.append("game", game)
+            }
+        }.body()
         return response.data
     }
 
-    suspend fun getOneTreasure(id: Int): Treasure {
-        val response: ApiResponseOneTreasure = client.get(urlEntry + id).body()
+    suspend fun getOneTreasure(id: Int, game: String): Treasure {
+        val response: ApiResponseOneTreasure = client.get(urlEntry + id) {
+            url {
+                parameters.append("game", game)
+            }
+        }.body()
         return response.data
     }
 
-    suspend fun getOneEntry(id: Int): Entry {
-        val response: ApiResponseOneEntry = client.get(urlEntry + id).body()
+    suspend fun getOneEntry(id: Int, game: String): Entry {
+        val response: ApiResponseOneEntry = client.get(urlEntry + id) {
+            url {
+                parameters.append("game", game)
+            }
+        }.body()
         return response.data
     }
 
