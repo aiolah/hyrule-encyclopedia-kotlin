@@ -102,9 +102,12 @@ class MainActivity : ComponentActivity() {
             val backStack = rememberNavBackStack(CreaturesScreen)
             var titlePage = "Créatures"
             var returnArrow = false
+            // Icône du jeu
             var actionIcon = true
             var totkIcon by remember { mutableStateOf(false) }
             var game by remember { mutableStateOf("botw") }
+            // On cache la loupe sur l'écran Détail et sur la page SearchedItems
+            var showLoupe = true
 
             when(backStack.lastOrNull()) {
                 is CreaturesScreen -> titlePage = "Créatures"
@@ -115,11 +118,13 @@ class MainActivity : ComponentActivity() {
                 is SearchedItems -> {
                     titlePage = "Éléments recherchés"
                     actionIcon = false
+                    showLoupe = false
                 }
                 is DetailEntryScreen -> {
                     titlePage = ""
                     returnArrow = true
                     actionIcon = false
+                    showLoupe = false
                 }
             }
 
@@ -251,9 +256,12 @@ class MainActivity : ComponentActivity() {
                         }
                     },
                     floatingActionButton = {
-                        FloatingActionButton(onClick = { backStack.add(SearchedItems) }) {
-                            // Icon(painter = painterResource(R.drawable.search), "Loupe")
-                            Icon(Icons.Filled.Search, "Loupe")
+                        if(showLoupe)
+                        {
+                            FloatingActionButton(onClick = { backStack.add(SearchedItems) }) {
+                                // Icon(painter = painterResource(R.drawable.search), "Loupe")
+                                Icon(Icons.Filled.Search, "Loupe")
+                            }
                         }
                     }
                 ) { innerPadding ->

@@ -29,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.example.hyrule_encyclopedia.ui.theme.hyliaFontFamily
+import com.example.hyrule_encyclopedia.ui.theme.onPrimaryContainerLight
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -84,7 +85,8 @@ fun SearchedItemsScreen(viewModel: MainViewModel, backStack: NavBackStack<NavKey
                 "Breath of the Wild",
                 fontFamily = hyliaFontFamily,
                 fontSize = 20.sp,
-                modifier = Modifier.padding(15.dp)
+                modifier = Modifier.padding(15.dp),
+                color = onPrimaryContainerLight
             )
 
             if (!isLoading && searchedEntriesBotw.size > 0) {
@@ -92,7 +94,7 @@ fun SearchedItemsScreen(viewModel: MainViewModel, backStack: NavBackStack<NavKey
             } else if (!isLoading && searchedEntriesBotw.size == 0) {
                 Text(
                     "Aucun élément recherché pour l'instant",
-                    modifier = Modifier.padding(18.dp, 100.dp)
+                    modifier = Modifier.padding(18.dp, 35.dp)
                 )
             }
         }
@@ -104,7 +106,8 @@ fun SearchedItemsScreen(viewModel: MainViewModel, backStack: NavBackStack<NavKey
                 "Tears of the Kingdom",
                 fontFamily = hyliaFontFamily,
                 fontSize = 20.sp,
-                modifier = Modifier.padding(15.dp)
+                modifier = Modifier.padding(15.dp),
+                color = onPrimaryContainerLight
             )
 
             if (!isLoading && searchedEntriesTotk.size > 0) {
@@ -112,7 +115,7 @@ fun SearchedItemsScreen(viewModel: MainViewModel, backStack: NavBackStack<NavKey
             } else if (!isLoading && searchedEntriesTotk.size == 0) {
                 Text(
                     "Aucun élément recherché pour l'instant",
-                    modifier = Modifier.padding(18.dp, 100.dp)
+                    modifier = Modifier.padding(18.dp, 35.dp)
                 )
             }
         }
